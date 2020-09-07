@@ -78,6 +78,22 @@ func HostnameOption() ServeOption {
 				host = xHost
 			}
 
+			// Do we have a {cid}.ipfs host?
+			if strings.HasSuffix(host, ".ipfs") {
+				labels := strings.Split(host, ".")
+				if len(labels) == 2 {
+					rootID := labels[0]
+					if _, err := cid.Decode(rootID); err == nil {
+						fmt.Print(host + r.URL.Path, " -> ")
+						r.URL.Path = "/" + "ipfs" + "/" + rootID + r.URL.Path
+						fmt.Println(r.URL.Path)
+						// Serve path request
+						childMux.ServeHTTP(w, r)
+						return
+					}
+				}
+			}
+
 			// HTTP Host & Path check: is this one of our  "known gateways"?
 			if gw, ok := isKnownHostname(host, knownGateways); ok {
 				// This is a known gateway but request is not using
