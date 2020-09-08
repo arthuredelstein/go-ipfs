@@ -85,13 +85,24 @@ func HostnameOption() ServeOption {
 					rootID := labels[0]
 					if _, err := cid.Decode(rootID); err == nil {
 						fmt.Print(host + r.URL.Path, " -> ")
-						r.URL.Path = "/" + "ipfs" + "/" + rootID + r.URL.Path
+						r.URL.Path = "/ipfs/" + rootID + r.URL.Path
 						fmt.Println(r.URL.Path)
 						// Serve path request
 						childMux.ServeHTTP(w, r)
 						return
 					}
 				}
+			}
+
+			// Do we have a ipns.{dns-name} host?
+			if strings.HasPrefix(host, "ipns.") {
+				labels := strings.Split(host, ".")
+				suffix := strings.Join(labels[1:], ".")
+				fmt.Print(host + r.URL.Path, "->")
+				r.URL.Path = "/ipns/" + suffix + r.URL.Path
+				fmt.Println(r.URL.Path)
+				childMux.ServeHTTP(w, r)
+				return
 			}
 
 			// HTTP Host & Path check: is this one of our  "known gateways"?
