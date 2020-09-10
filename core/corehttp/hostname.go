@@ -78,7 +78,7 @@ func HostnameOption() ServeOption {
 				host = xHost
 			}
 
-			// Do we have a {cid}.ipfs host?
+			// Are we being asked to proxy a {cid}.ipfs host?
 			if strings.HasSuffix(host, ".ipfs") {
 				labels := strings.Split(host, ".")
 				if len(labels) == 2 {
@@ -94,7 +94,7 @@ func HostnameOption() ServeOption {
 				}
 			}
 
-			// Do we have a ipns.{dns-name} host?
+			// Are we being asked to proxy a ipns.{dns-name} host?
 			if strings.HasPrefix(host, "ipns.") {
 				labels := strings.Split(host, ".")
 				suffix := strings.Join(labels[1:], ".")
