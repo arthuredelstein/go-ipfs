@@ -95,15 +95,6 @@ func HostnameOption() ServeOption {
 				}
 			}
 
-			// Are we being asked to proxy a *.eth host?
-			if strings.HasSuffix(host, ".eth") {
-				fmt.Print(host + r.URL.Path, "->")
-				r.URL.Path = "/ipns/" + host + r.URL.Path
-				fmt.Println(r.URL.Path)
-				childMux.ServeHTTP(w, r)
-				return
-			}
-
 			// HTTP Host & Path check: is this one of our  "known gateways"?
 			if gw, ok := isKnownHostname(host, knownGateways); ok {
 				// This is a known gateway but request is not using
