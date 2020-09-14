@@ -95,12 +95,10 @@ func HostnameOption() ServeOption {
 				}
 			}
 
-			// Are we being asked to proxy a ipns.{dns-name} host?
-			if strings.HasPrefix(host, "ipns.") {
-				labels := strings.Split(host, ".")
-				suffix := strings.Join(labels[1:], ".")
+			// Are we being asked to proxy a *.eth host?
+			if strings.HasSuffix(host, ".eth") {
 				fmt.Print(host + r.URL.Path, "->")
-				r.URL.Path = "/ipns/" + suffix + r.URL.Path
+				r.URL.Path = "/ipns/" + host + r.URL.Path
 				fmt.Println(r.URL.Path)
 				childMux.ServeHTTP(w, r)
 				return
