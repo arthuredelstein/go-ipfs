@@ -78,14 +78,15 @@ func HostnameOption() ServeOption {
 				host = xHost
 			}
 
-			// Are we being asked to proxy a {cid}.ipfs host?
-			if strings.HasSuffix(host, ".ipfs") {
+			// Are we being asked to proxy a {cid}.ipfs or {cid}.ipns host?
+			if strings.HasSuffix(host, ".ipfs") || strings.HasSuffix(host, ".ipns") {
 				labels := strings.Split(host, ".")
 				if len(labels) == 2 {
 					rootID := labels[0]
+					ns := labels[1]
 					if _, err := cid.Decode(rootID); err == nil {
 						fmt.Print(host + r.URL.Path, " -> ")
-						r.URL.Path = "/ipfs/" + rootID + r.URL.Path
+						r.URL.Path = "/" + ns + "/" + rootID + r.URL.Path
 						fmt.Println(r.URL.Path)
 						// Serve path request
 						childMux.ServeHTTP(w, r)
